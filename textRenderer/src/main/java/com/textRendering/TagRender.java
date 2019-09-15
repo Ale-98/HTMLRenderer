@@ -20,14 +20,15 @@ public class TagRender implements Runnable, Comparable<TagRender>{
 		return renderedLine;
 	}
 	
+	/**
+	 * Set a way of sorting TagRenderers looking at their id.
+	 */
 	public int compareTo(TagRender o) {
-		if(id>o.id) return 1;
-		else if(id<o.id) return -1;
-		else return 0;
+		return id-o.id;
 	}
 
 	public void run() {
-		renderedLine = tagRender();
+		renderedLine = tagRendering();
 		try {
 			theBarrier.await();
 		} catch (InterruptedException e) {
@@ -39,10 +40,13 @@ public class TagRender implements Runnable, Comparable<TagRender>{
 		}
 	}
 
-	public String tagRender() {
+	/**
+	 * Elaborates a line of the file to be rendered. Optimized for bulleted lists.
+	 * @return The rendered line.
+	 */
+	public String tagRendering() {
 		int c, i = 0;
 		String line = "", tag = "";
-//		String[] splitted;
 		boolean toWrite = true;
 		while(i<myLine.length()) {
 			c=myLine.charAt(i++);
@@ -56,24 +60,7 @@ public class TagRender implements Runnable, Comparable<TagRender>{
 				if(tag.equals("<h3>")) {line+="-->";}
 				toWrite = true; tag = "";
 			}
-		}/*
-		if(line.contains("Â&nbsp;")) {
-			splitted = line.split("Â&nbsp;");
-			line = "";
-			for(int j = 0; j<splitted.length; j++) {
-				if(!splitted[j].equals("Â&nbsp;")) {
-					line+=splitted[j];
-				}
-			}
-		} else if(line.contains("Ã&nbsp;")) {
-			splitted = line.split("Ã&nbsp;");
-			line = "";
-			for(int j = 0; j<splitted.length; j++) {
-				if(!splitted[j].equals("Ã&nbsp;")) {
-					line+=splitted[j];
-				}
-			}
-		}*/
+		}
 		return line;
 	}
 }

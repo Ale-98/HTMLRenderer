@@ -1,7 +1,5 @@
 package com.textRendering;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -16,13 +14,26 @@ public class Renderer {
 
 	private TreeSet<TagRender> threads = new TreeSet<TagRender>();
 	private String fileToRender;
+	private String where;
 
-	public Renderer(String parsed) {
+	/**
+	 * Construct a Renderer from the given String.
+	 * @param parsed The parsed String to be rendered.
+	 * @param where Directory in which save the results.
+	 */
+	public Renderer(String parsed, String where) {
 		fileToRender = cleanContent(parsed);
+		this.where = where;
 	}
 	
-	public Renderer(PageDownloader pd) {
+	/**
+	 * Construct a Renderer from the given Document.
+	 * @param pd The parsed Document to be parsed.
+	 * @param where Directory in which save the results.
+	 */
+	public Renderer(PageDownloader pd, String where) {
 		fileToRender = cleanContent(pd.getParsedHtml());
+		this.where = where;
 	}
 
 	public String getFile() {
@@ -30,23 +41,14 @@ public class Renderer {
 	}
 
 	/**
-	 * Scrive la stringa che rappresenta questo oggetto in un File. 
-	 * @return Il File creato.
-	 * @throws IOException In caso di errore di IO.
+	 * Implements a MapReduce pattern for elaborating the file to be rendered.
+	 * Uses the file to be rendered(which is usually obtained from e PageDownloader) 
+	 * and generate a tagRender to elaborate every line of the file throw a map operation.
+	 * Generated runnables objects are sorted in TreeSet for final reduce operation.
 	 */
-	public void toFile() throws IOException {
-//		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//		System.out.println("Dove memorizzo il File?");
-		String fileDirectory = "C:/Users/Ale/eclipse-workspace/textRenderer/src/main/resources/prova.txt";		
-		FileWriter fw = new FileWriter(fileDirectory);
-		fw.write(fileToRender);
-		fw.flush();
-		fw.close();
-	}
-
 	public void rendering() {
 		StringTokenizer stk = new StringTokenizer(fileToRender, "\n");
-		Reducer red = new Reducer(threads);
+		Reducer red = new Reducer(threads, where);
 		CyclicBarrier theBarrier = new CyclicBarrier(stk.countTokens(), red);
 		while(stk.hasMoreTokens()) {
 			TagRender tg = new TagRender(stk.nextToken(), theBarrier);
@@ -60,7 +62,7 @@ public class Renderer {
 	 * Cleans the html content leaving only the following tags: b, em, i, strong, u, br, cite, em, i, p, strong, img, li, ul, ol, sup, sub, s
 	 * @param content html content
 	 * @param extraTags any other tags that you may want to keep, e. g. "a"
-	 * @return
+	 * @return the cleaned HTML file(ready to be rendered)
 	 */
 	public String cleanContent(String content, String ... extraTags) {
 		Whitelist allowedTags = Whitelist.simpleText(); // This whitelist allows only simple text formatting: b, em, i, strong, u. All other HTML (tags and attributes) will be removed.

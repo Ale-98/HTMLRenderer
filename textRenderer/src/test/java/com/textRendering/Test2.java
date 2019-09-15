@@ -95,7 +95,7 @@ public class Test2 {
 		t2.extractDataWithJsoup("https://www.topristorazione.com/frigoriferi-vino/3544-espositore-verticale-vino-vetri-fume-3-porte-verticali-temperatura-520c-modello-vinity3v.html");
 //		t2.extractDataWithJsoup("https://www.ebay.it/");
 //		t2.display();
-		Renderer r = new Renderer(cleaned);
+		Renderer r = new Renderer(cleaned, null);
 		r.rendering();
 //		System.out.println(doc);
 	}

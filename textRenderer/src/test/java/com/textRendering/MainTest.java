@@ -27,7 +27,7 @@ public class MainTest {
 //			FileWriter fw = new FileWriter(to);
 //			fw.write(Jsoup.parse(txtToString(from)).toString());
 //			System.out.println(Jsoup.parse(txtToString(from)).toString());
-			Renderer theRenderer = new Renderer(Jsoup.parse(txtToString(from)).toString());
+			Renderer theRenderer = new Renderer(Jsoup.parse(txtToString(from)).toString(), null);
 			theRenderer.rendering();
 //			theRenderer.tagRender();
 //			theRenderer.printLines();
