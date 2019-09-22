@@ -8,7 +8,7 @@ Import the project in your IDE as an existing maven project.
 ---
 To run the project start RenderGUI class:
 
-- Paste URL or browse the file to render.
+- Paste URL or browse the file.txt to render.
 - Choose where to save the processed file.
 - Hit start button.
 

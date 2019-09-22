@@ -81,6 +81,10 @@ public class RenderGUI extends JFrame{
 	private class StartButtonHandler implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {
+			if(fileField1.getText().equals("") || fileField2.getText().equals("")) {
+				JOptionPane.showMessageDialog(null, "Must fill both text fields");
+				return;
+			}
 			PageDownloader pd = null;
 			File f = new File(fileField1.getText());
 			if(f.isFile()) {
