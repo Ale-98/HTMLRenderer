@@ -9,10 +9,12 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class RenderGUI extends JFrame{
 
@@ -22,10 +24,12 @@ public class RenderGUI extends JFrame{
 	private static final int BUTTON_HORIZONTAL_SIZE = 150;
 	private static final int TEXT_FIELD_HORIZONTAL_SIZE = 300;
 	private static final int TEXT_FIELD_VERTICAL_SIZE = 30;
+	
+	private final String separator = "==========================================";
 
 	private JLabel whereIsTheFile, whereToBoundFile;
 	private JTextField fileField1, fileField2;
-	private JButton start;
+	private JButton start, browse1, browse2;
 
 	public RenderGUI() {
 		super("HTML Renderer");
@@ -33,7 +37,7 @@ public class RenderGUI extends JFrame{
 		Container con = getContentPane();
 		con.setLayout(new FlowLayout());
 
-		whereIsTheFile = new JLabel("Paste directory/URL here(File/URL)");
+		whereIsTheFile = new JLabel("Paste URL or browse the file to render");
 		con.add(whereIsTheFile);
 
 		Dimension textFieldDimension = new Dimension(TEXT_FIELD_HORIZONTAL_SIZE, TEXT_FIELD_VERTICAL_SIZE);
@@ -41,6 +45,13 @@ public class RenderGUI extends JFrame{
 		fileField1.setPreferredSize(textFieldDimension);
 		con.add(fileField1);
 
+		browse1 = new JButton("Browse");
+		browse1.setPreferredSize(textFieldDimension);
+		browse1.addActionListener(new BrowseButtonHandler());
+		con.add(browse1);
+		
+		con.add(new JLabel(separator));
+		
 		whereToBoundFile = new JLabel("Choose where to save the file");
 		con.add(whereToBoundFile);
 
@@ -48,6 +59,13 @@ public class RenderGUI extends JFrame{
 		fileField2.setPreferredSize(textFieldDimension);
 		con.add(fileField2);
 
+		browse2 = new JButton("Browse");
+		browse2.setPreferredSize(textFieldDimension);
+		browse2.addActionListener(new BrowseButtonHandler());
+		con.add(browse2);
+		
+		con.add(new JLabel(separator));
+		
 		Dimension buttonDimension = new Dimension(BUTTON_HORIZONTAL_SIZE, BUTTON_VERTICAL_SIZE);
 		start = new JButton("Start");
 		start.setPreferredSize(buttonDimension);
@@ -56,9 +74,10 @@ public class RenderGUI extends JFrame{
 		con.add(start);
 
 		setVisible(true);
-		setSize(30*11, 30*7);
+		setSize(30*11, 30*10);
 	}
 
+	// Handlers----------------------------------------------------------
 	private class StartButtonHandler implements ActionListener{
 
 		public void actionPerformed(ActionEvent e) {
@@ -83,6 +102,24 @@ public class RenderGUI extends JFrame{
 			theRenderer.rendering();
 			JOptionPane.showMessageDialog(null, "Done! The result is here:"+fileField2.getText()); 
 		}
+	}
+	
+	private class BrowseButtonHandler implements ActionListener{
+
+		public void actionPerformed(ActionEvent e) {
+			JFileChooser chooser = new JFileChooser();
+		    FileNameExtensionFilter filter = new FileNameExtensionFilter("TXT Files", "txt");
+		    chooser.setFileFilter(filter);
+		    int returnVal = chooser.showOpenDialog(null);
+		    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		       if(e.getSource().equals(browse1)) {
+		    	   fileField1.setText(chooser.getSelectedFile().getAbsolutePath());
+		       }else {
+		    	   fileField2.setText(chooser.getSelectedFile().getAbsolutePath());
+		       }
+		    }
+		}
+		
 	}
 
 	public static void main(String[] args) {
